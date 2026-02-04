@@ -1,74 +1,76 @@
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 // ================= REGISTER =================
-export const registerUser = async (req, res) => {
+export const UserRegister = async (req, res, next) => {
   try {
-    const { fullName, email, password } = req.body;
+    const { fullName, email, mobileNumber, password } = req.body;
 
-    if (!fullName || !email || !password) {
-      return res.status(400).json({ message: "All fields required" });
+    if (!fullName || !email || !mobileNumber || !password) {
+      const error = new Error("All fields required");
+      error.statusCode = 400;
+      return next(error);
     }
 
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(409).json({ message: "Email already registered" });
+    // check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      const error = new Error("Email already exists");
+      error.statusCode = 400;
+      return next(error);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
     await User.create({
       fullName,
       email,
+      mobileNumber,
       password: hashedPassword,
     });
 
     res.status(201).json({ message: "Registration successful" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
 // ================= LOGIN =================
-export const loginUser = async (req, res) => {
+export const UserLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "All fields required" });
+      const error = new Error("All fields required");
+      error.statusCode = 400;
+      return next(error);
     }
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: "Invalid email or password" });
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      const error = new Error("Email not registered");
+      error.statusCode = 400;
+      return next(error);
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid email or password" });
-    }
-
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+    const isPasswordMatch = await bcrypt.compare(
+      password,
+      existingUser.password,
     );
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "strict",
-    });
+    if (!isPasswordMatch) {
+      const error = new Error("Password did not match");
+      error.statusCode = 400;
+      return next(error);
+    }
 
-    res.json({
+    res.status(200).json({
       message: "Login successful",
-      data: {
-        id: user._id,
-        fullName: user.fullName, 
-        email: user.email,
-      },
+      data: existingUser,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
