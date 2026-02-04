@@ -36,7 +36,7 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
       <div className="w-full max-w-md bg-base-100 rounded-2xl shadow-xl p-8">
         <h2 className="text-3xl font-bold text-center text-base-content">
-          Welcome Back 👋
+          Welcome Back
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-6">

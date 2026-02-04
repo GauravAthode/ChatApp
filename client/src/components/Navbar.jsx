@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FaRocketchat } from "react-icons/fa";
 
 const Navbar = () => {
   const [theme, setTheme] = useState("");
@@ -20,7 +21,12 @@ const Navbar = () => {
   return (
     <div className="bg-primary flex justify-between items-center px-5 py-2">
       {/* Logo */}
-      <h1 className="font-bold text-lg">ChatKaro</h1>
+      <h1 className="font-bold text-lg">
+        <div className="flex gap-4">
+          <FaRocketchat />
+          ChatKaro
+        </div>
+      </h1>
 
       {/* Nav Links */}
       <div className="flex gap-4 font-bold">
