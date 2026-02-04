@@ -7,7 +7,6 @@ export const registerUser = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
 
-    // ✅ correct fields
     if (!fullName || !email || !password) {
       return res.status(400).json({ message: "All fields required" });
     }
@@ -20,7 +19,7 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await User.create({
-      fullName, // ✅ matches model
+      fullName,
       email,
       password: hashedPassword,
     });
@@ -53,7 +52,7 @@ export const loginUser = async (req, res) => {
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" }
+      { expiresIn: "1d" }
     );
 
     res.cookie("token", token, {
@@ -65,7 +64,7 @@ export const loginUser = async (req, res) => {
       message: "Login successful",
       data: {
         id: user._id,
-        fullName: user.fullName, // ✅ fixed
+        fullName: user.fullName, 
         email: user.email,
       },
     });
