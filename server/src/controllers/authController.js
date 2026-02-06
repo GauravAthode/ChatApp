@@ -29,6 +29,7 @@ export const UserRegister = async (req, res, next) => {
       email,
       mobileNumber,
       password: hashedPassword,
+      userType: "regular",
     });
 
     res.status(201).json({ message: "Registration successful" });
@@ -55,6 +56,13 @@ export const UserLogin = async (req, res, next) => {
       return next(error);
     }
 
+    const isGoogleUser = existingUser.userType === "google";
+    if (isGoogleUser) {
+      const error = new Error("Please log in with Google");
+      error.statusCode = 400;
+      return next(error);
+    }
+
     const isPasswordMatch = await bcrypt.compare(
       password,
       existingUser.password,
@@ -66,6 +74,55 @@ export const UserLogin = async (req, res, next) => {
       return next(error);
     }
 
+    res.status(200).json({
+      message: "Login successful",
+      data: existingUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const GoogleUserLogin = async (req, res, next) => {
+  try {
+    const { name, email, id, imageUrl } = req.body;
+
+    if (!imageUrl) {
+      //use Defualt Photo Code here
+      //using placehold.co
+    }
+    let existingUser = await User.findOne({ email });
+    const salt = await bcrypt.genSalt(10);
+
+    if (existingUser && existingUser.userType) {
+      if (existingUser.userType === "regular") {
+        console.log("pink");
+        existingUser.userType = "hybrid";
+        existingUser.googleId = bcrypt.hash(id, salt);
+        await existingUser.save();
+      } else {
+        console.log("green");
+        const isVerified = await bcrypt.compare(id, existingUser.googleId);
+        if (!isVerified) {
+          const error = new Error("User Not Verified");
+          error.statusCode = 400;
+          return next(error);
+        }
+      }
+    } else {
+      console.log("orange");
+      const hashGoogleID = await bcrypt.hash(id, salt);
+
+      const newUser = await User.create({
+        fullName: name,
+        email,
+        googleId: hashGoogleID,
+        userType: "google",
+      });
+      existingUser = newUser;
+    }
+
+    //genrate login token if requred
     res.status(200).json({
       message: "Login successful",
       data: existingUser,

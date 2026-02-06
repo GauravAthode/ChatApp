@@ -2,9 +2,9 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-
 import connectDB from "./src/config/db.js";
 import AuthRouter from "./src/routers/authRouter.js";
+import morgan from "morgan";
 
 dotenv.config();
 
@@ -15,12 +15,13 @@ app.use(
   cors({
     origin: "http://localhost:5173",
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(morgan("dev"));
 
 // Routes
 app.use("/auth", AuthRouter);
