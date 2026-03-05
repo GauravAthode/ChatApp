@@ -39,7 +39,7 @@ const NavBar = () => {
         {/* Actions */}
         <div className="flex items-center gap-3">
           <button
-            className="btn btn-secondary btn-sm px-5"
+            className="btn-secondary1"
             onClick={() => navigate("/login")}
           >
             Login

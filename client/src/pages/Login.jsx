@@ -24,7 +24,7 @@ const Login = () => {
       handleClearForm();
 
       // simple redirect
-      navigate("/dashboard");
+      navigate("/chatting");
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message || "Login failed");
