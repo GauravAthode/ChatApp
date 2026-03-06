@@ -247,6 +247,7 @@ const ContactBar = ({ fetchMode, setReceiver }) => {
                 </p>
               </div>
             ))}
+            
         </div>
       </div>
     </>
