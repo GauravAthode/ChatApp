@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Chating from "./pages/Chating";
+import UserDashboard from "./pages/UserDashboard";
 
 const App = () => {
   return (
@@ -14,13 +15,11 @@ const App = () => {
         <Toaster />
         <Navbar />
         <Routes>
-          
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/chatting" element={<Chating />} />
-
-          
+          <Route path="/userDashboard" element={<UserDashboard />} />
         </Routes>
       </BrowserRouter>
     </>

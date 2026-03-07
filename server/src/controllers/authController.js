@@ -1,3 +1,4 @@
+import { generateToken } from "../config/authToken.js";
 import User from "../models/userModel.js";
 import bcrypt from "bcrypt";
 
@@ -74,6 +75,9 @@ export const UserLogin = async (req, res, next) => {
       return next(error);
     }
 
+    // Generate token and set cookie
+    generateToken(existingUser._id, res);
+    
     res.status(200).json({
       message: "Login successful",
       data: existingUser,
@@ -123,6 +127,8 @@ export const GoogleUserLogin = async (req, res, next) => {
     }
 
     //genrate login token if requred
+
+    generateToken(existingUser._id, res);
     res.status(200).json({
       message: "Login successful",
       data: existingUser,

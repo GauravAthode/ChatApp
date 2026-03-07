@@ -4,9 +4,11 @@ import api from "../config/api";
 import { useNavigate } from "react-router-dom";
 import { useGoogleAuth } from "../config/GoogleAuth";
 import { FcGoogle } from "react-icons/fc";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setUser, setIsLogin } = useAuth();
 
   const { isLoading, error, isInitialized, signInWithGoogle } = useGoogleAuth();
 
@@ -20,7 +22,8 @@ const Login = () => {
 
       // optional: store user or token
       sessionStorage.setItem("AppUser", JSON.stringify(res.data.data));
-
+      setUser(res.data.data);
+      setIsLogin(true);
       handleClearForm();
 
       // simple redirect
@@ -69,11 +72,12 @@ const Login = () => {
 
       // optional: store user or token
       sessionStorage.setItem("AppUser", JSON.stringify(res.data.data));
-
+      setUser(res.data.data);
+      setIsLogin(true);
       handleClearForm();
 
       // simple redirect
-      navigate("/dashboard");
+      navigate("/chatting");
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message || "Login failed");

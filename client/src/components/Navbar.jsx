@@ -1,8 +1,12 @@
+
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const NavBar = () => {
+  const { user, isLogin } = useAuth();
   const [theme, setTheme] = useState("light");
+
   const navigate = useNavigate();
 
   const handleThemeChange = (event) => {
@@ -28,32 +32,40 @@ const NavBar = () => {
 
         {/* Links */}
         <div className="hidden md:flex gap-6 text-sm font-medium">
-          <span className="cursor-pointer hover:text-secondary transition">
-            Home
-          </span>
-          <span className="cursor-pointer hover:text-secondary transition">
-            About
-          </span>
+          <Link to="/chatting"> Chat </Link>
         </div>
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <button
-            className="btn-secondary1"
-            onClick={() => navigate("/login")}
-          >
-            Login
-          </button>
+          {isLogin ? (
+            <div
+              className="flex items-center gap-3 cursor-pointer p-1 border border-primary hover:border-primary-content rounded-md transition"
+              onClick={() => navigate("/userDashboard")}
+            >
+              <span className="text-nowrap text-lg font-semibold">
+                Welcome,{" "}
+                {user?.fullName.split(" ")[0] || user?.email.split("@")[0]}
+              </span>
+            </div>
+          ) : (
+            <>
+              <button
+                className="btn-secondary1"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </button>
 
-          <button
-            className="btn btn-outline btn-sm px-5"
-            onClick={() => navigate("/register")}
-          >
-            Register
-          </button>
-
+              <button
+                className="btn btn-outline btn-sm px-5"
+                onClick={() => navigate("/register")}
+              >
+                Register
+              </button>
+            </>
+          )}
           <select
-            className="select select-bordered select-sm min-w-[130px]"
+            className="select select-bordered select-sm max-w-32"
             onChange={handleThemeChange}
             value={theme}
           >
