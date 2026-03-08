@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import api from "../../config/api";
 import { useAuth } from "../../context/AuthContext";
+import socketAPI from "../../config/WebSocket";
 
 const ChatWindow = ({ receiver }) => {
   const { user } = useAuth();
   const bottomRef = useRef(null);
 
-  const senderId = user?.id || 1; // Replace with actual logged-in user ID
+  const senderId = user?._id || 1; // Replace with actual logged-in user ID
   const receiverId = receiver?._id || 2; // Replace with actual receiver ID
 
   const [messages, setMessages] = useState([]);
@@ -15,7 +16,7 @@ const ChatWindow = ({ receiver }) => {
   const [inputMessage, setInputMessage] = useState("");
 
   const scrolltoBottom = () => {
-    console.log(bottomRef);
+   // console.log(bottomRef);
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -37,12 +38,17 @@ const ChatWindow = ({ receiver }) => {
       message: inputMessage,
     };
 
+    const timestamp = new Date().toISOString();
+
     try {
-      const res = await api.post(`/user/sendMessage/${receiverId}`, {
-        inputMessage,
-      });
-      setInputMessage("");
-      setMessages((prev) => [...prev, res.data.data]);
+      if (socketAPI.connected) {
+        socketAPI.emit("send", messagePacket);
+        setInputMessage("");
+        setMessages((prev) => [
+          ...prev,
+          { ...messagePacket, createdAt: timestamp, updatedAt: timestamp },
+        ]);
+      }
     } catch (error) {
       console.log(error);
       toast.error(error?.response?.data?.message || "Message Sending Failed");
@@ -59,6 +65,11 @@ const ChatWindow = ({ receiver }) => {
     }
   };
 
+  const handleReceiveMessage = (newMessagePack) => {
+    // console.log(newMessagePack);
+    setMessages((prev) => [...prev, newMessagePack]);
+  };
+
   //on component Load
   useEffect(() => {
     setMessages([]);
@@ -66,6 +77,16 @@ const ChatWindow = ({ receiver }) => {
       fetchAllOldMessage();
     }
   }, [receiver]);
+
+  useEffect(() => {
+    socketAPI.on("receive", handleReceiveMessage);
+
+    return () => {
+      socketAPI.off("receive", handleReceiveMessage);
+    };
+  }, [receiverId, handleReceiveMessage]);
+
+
 
   if (!receiver) {
     return (
@@ -77,7 +98,7 @@ const ChatWindow = ({ receiver }) => {
     );
   }
 
-  //console.log(messages);
+  console.log("messages = ", messages);
 
   return (
     <>
@@ -128,7 +149,7 @@ const ChatWindow = ({ receiver }) => {
             <button
               className="btn btn-primary disabled:bg-secondary"
               onClick={handleSend}
-              disabled={inputMessage===""}
+              disabled={inputMessage === ""}
             >
               Send
             </button>

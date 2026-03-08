@@ -27,7 +27,6 @@ export const GoogleProtect = async (req, res, next) => {
     if (email !== payload.email || id !== payload.sub) {
       const error = new Error("User Not Verified");
       error.statusCode = 400;
-      
       return next(error);
     }
     next();
