@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import QuickNavigation from "../components/chat/QuickNavigation";
-import ContactBar from "../components/chat/ContactBar";
-import ChatWindow from "../components/chat/ChatWindow";
+import QuickNavigation from "../components/chat/QuickNavigation.jsx";
+import ContactBar from "../components/chat/ContactBar.jsx";
+import ChatWindow from "../components/chat/ChatWindow.jsx";
 import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import socketAPI from "../config/WebSocket";

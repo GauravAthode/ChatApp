@@ -4,7 +4,7 @@ import {
   UserLogin,
   GoogleUserLogin,
 } from "../controllers/authController.js";
-import { GoogleProtect } from "../middleware/googleMiddleware.js";
+import { GoogleProtect } from "../middlewares/googleMiddleware.js";
 
 const router = express.Router();
 router.post("/register", UserRegister);
