@@ -86,6 +86,7 @@ const NavBar = () => {
             <option value="soft">Soft</option>
             <option value="valorant">Valorant</option>
           </select>
+          
         </div>
       </div>
     </nav>
