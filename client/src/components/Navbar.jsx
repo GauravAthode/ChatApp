@@ -30,9 +30,10 @@ const NavBar = () => {
         </h1>
 
         {/* Links */}
-        <div className="hidden md:flex gap-6 text-sm font-medium">
-          <Link to="/chatting"> Chat </Link>
+        <div className="hidden md:flex gap-6 text-sm font-bold text-red-700">
+          <Link to="/chatting" > chating </Link>
         </div>
+
 
         {/* Actions */}
         <div className="flex items-center gap-3">
