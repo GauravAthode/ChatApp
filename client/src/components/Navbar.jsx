@@ -33,7 +33,6 @@ const NavBar = () => {
         <div className="hidden md:flex gap-6 text-sm font-bold text-red-700">
           <Link to="/chatting" > chating </Link>
         </div>
-
         {/* Actions */}
         <div className="flex items-center gap-3">
           {isLogin ? (
