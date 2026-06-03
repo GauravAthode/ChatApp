@@ -42,6 +42,7 @@ const NavBar = () => {
             >
               <span className="text-nowrap text-lg font-semibold">
                 Welcome,{" "}
+                
                 {user?.fullName.split(" ")[0] || user?.email.split("@")[0]}
               </span>
             </div>
