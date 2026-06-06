@@ -46,6 +46,8 @@ const NavBar = () => {
                 {user?.fullName.split(" ")[0] || user?.email.split("@")[0]}
               </span>
             </div>
+
+            
           ) : (
             <>
               <button
